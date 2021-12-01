@@ -40,7 +40,7 @@ Upon completing this analysis Brittany has provided the following 3 recommendati
 2.	Consider implementing employee retention programs that foster a culture of belonging. These programs can organize events such as Top Golf outings and happy      hours to strengthen the comradery amongst employees. 
 4.	Avoid promoting employees as a retention mechanism. The data shows a negative relationship exists between years since last promotion and attrition.
 
-##Introduction
+# Introduction
 
 Brittany Lewandowski, an employee of DDSAnalytics, was provided with an Attrition data set for client, Frito Lay. Brittany was then asked to leverage data science to identify insights within the data set that will help Frito Lay retain their talent.
 
@@ -52,7 +52,7 @@ Specifically, Brittany was asked to:
 
 Using RStudio, Brittany completed this analysis. Answers to the above questions of interest, along with the R code Brittany wrote are included in this repository. The PowerPoint presentation given to CEO of Frito Lay, Professor Lindsey, and the CFO of Frito Lay is included as well. The RMarkdown file contains comments explaining each piece of code and was annotated with reproducibility in mind. Should you have any questions about this analysis, please contact Brittany Lewandowski at: blewandowski@smu.edu
 
-###Conclusion
+# Conclusion
 
 Upon analyzing Frito Lay’s attrition data set, Brittany determined: 
 1.	Job Roles with the highest attrition are: Sales Executives, Research Scientists, and Laboratory Technicians.
@@ -60,7 +60,7 @@ Upon analyzing Frito Lay’s attrition data set, Brittany determined:
 3.	Naïve Bayes classified attrition with an accuracy of 100%.
 4.	Linear Regression model predicted monthly income with an RMSE of 1694. 
 
-####Extending This Research
+# Extending This Research
 
 This analysis was time constrained and was completed in two weeks. With this in mind, research can be extended on this project in the following ways:
 
