@@ -1,0 +1,286 @@
+---
+title: "DDS Case Study2"
+author: "Brittany Lewandowski"
+date: "12/04/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## R Markdown
+#Link To YouTube recording of this analysis: https://youtu.be/vgB4_3Dgcyw
+
+#Loading "Attrition" data set.
+```{r}
+Attrition = read.csv("/Users/brittanylewandowski/Documents/MSDS_6306_Doing-Data-Science/Unit 14 and 15 Case Study 2/Attrition.csv")
+```
+
+## The following code cleans and tidies the "Attrition" data set, rendering it useful for modeling. 
+#Identifying & removing null values in our "Attrition" data set.
+```{r}
+is.na(Attrition)
+```
+#Creating a Yearly Salary column named "Yearly_Income."
+```{r}
+Yearly_Income = Attrition$MonthlyIncome*12
+Yearly_Income
+```
+#Appending my "Yearly_Income" column to our original data set.
+```{r}
+Attrition = cbind(Attrition,Yearly_Income)
+```
+#Create a categorical column for Attrition name, "Att_Num". 
+```{r}
+Att_Num <- ifelse(Attrition$Attrition == 'No', 0, 1)
+Att_Num
+```
+#Appending my "Att_Num" categorical column to our original data set.
+```{r}
+Attrition = cbind(Attrition,Att_Num)
+```
+#Converting data types of columns from character to factors to run multiple linear regression on the data.
+```{r}
+Attrition$Attrition = as.factor(Attrition$Attrition)
+class(Attrition$Attrition)
+Attrition$BusinessTravel = as.factor(Attrition$BusinessTravel)
+class(Attrition$BusinessTravel)
+Attrition$Department = as.factor(Attrition$Department)
+class(Attrition$Department)
+Attrition$EducationField = as.factor(Attrition$EducationField)
+class(Attrition$EducationField)
+Attrition$Gender = as.factor(Attrition$Gender)
+class(Attrition$Gender)
+Attrition$JobRole = as.factor(Attrition$JobRole)
+class(Attrition$JobRole)
+Attrition$MaritalStatus = as.factor(Attrition$MaritalStatus)
+class(Attrition$MaritalStatus)
+Attrition$OverTime = as.factor(Attrition$OverTime)
+class(Attrition$OverTime)
+```
+#Replacing column "Over18's" value of "Y" to "1" to run multiple linear regression on the data.
+```{r}
+Attrition$Over18[Attrition$Over18=="Y"]<-"1"
+```
+#Converting "Over18" column's data type from "chr" to "numeric" to run multiple linear regression on the data.
+```{r}
+Attrition$Over18 = as.numeric(Attrition$Over18)
+class(Attrition$Over18)
+```
+#Converting the "Att_Num" column to a factor.
+```{r}
+Attrition$Att_Num = as.factor(Attrition$Att_Num)
+```
+##The following code creates visualizations to accompany my Naive Bayes classifer of Attrition and MLR model of Monthly Income.
+#Creating a bar chart showing Attrition by Job Role.
+```{r}
+library(ggplot2)
+ggplot(data=Attrition,aes(x=JobRole,fill=Attrition))+theme(axis.text.x  = element_text(angle=90, hjust=0.5, size=10,colour="black"))+geom_bar(position="fill")+
+  ggtitle("Attrition By Job Role") + geom_text(aes(label = ..count..), stat = "count", position = "fill")
+  theme(plot.title = element_text(hjust = 0.50))
+```
+#Bar chart visualizing Attrition by Job Satisfaction 
+```{r}
+library(ggplot2)
+ggplot(Attrition, aes(x=JobRole,y = JobSatisfaction,fill=JobRole)) +geom_bar(stat = "identity")+theme(axis.text.x  = element_text(angle=90, hjust=0.5, size=10,colour="black"))+ggtitle("Job Satisfaction By Job Role") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Job Role") + ylab("Job Satisfaction")
+```
+#Bar chart showing Yearly Income By Job Role.
+```{r}
+library(ggplot2)
+ggplot(Attrition, aes(x=JobRole,y=Yearly_Income,color=JobRole)) +geom_boxplot()+theme(axis.text.x  = element_text(angle=90, hjust=0.5, size=10,colour="black"))+ggtitle("Yearly Income By Job Role") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Job Role") + ylab("Annual Income")
+```
+#Number of companies worked by job role
+```{r}
+library(ggplot2)
+ggplot(Attrition, aes(x=NumCompaniesWorked,fill=JobRole)) + geom_bar()+theme(axis.text.x  = element_text(angle=0, hjust=0.5, size=10,colour="black"))+ggtitle("Number of Companies Worked By Job Role") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Number of Companies Worked") + ylab("Count") 
+```
+#Age By NumOfCompaniesWorked
+```{r}
+library(ggplot2)
+ggplot(Attrition, aes(x=NumCompaniesWorked,y=Age, color=JobRole)) + geom_boxplot()+theme(axis.text.x  = element_text(angle=0, hjust=0.5, size=10,colour="black"))+ggtitle("Age By Number Of Companies Worked") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Number of Companies Worked") + ylab("Age")
+```
+#Bar chart showing Attrition by age.
+```{r}
+library(ggplot2)
+ggplot(Attrition, aes(x=Age, fill=Attrition)) + geom_bar()+theme(axis.text.x  = element_text(angle=0, hjust=0.5, size=10,colour="black"))+ggtitle("Attrition By Age") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Age") +ylab("Count")
+```
+#Attrition by Years Since Last Promotion.
+```{r}
+library(ggplot2)
+ggplot(Attrition, aes(x=YearsSinceLastPromotion, fill=Attrition)) + geom_bar()+theme(axis.text.x  = element_text(angle=0, hjust=0.5, size=10,colour="black"))+ggtitle("Attrition By Years Since Last Promotion") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Years Since Last Promotion") +ylab("Count")
+```
+#Bar chart showing attrition by annual income.
+```{r}
+library(ggplot2)
+ggplot(Attrition, aes(x=JobRole,y=Yearly_Income, color=JobRole)) + geom_point()+theme(axis.text.x  = element_text(angle=90, hjust=0.5, size=10,colour="black"))+ggtitle("Attrition By Job Role & Annual Income") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Job Role") +ylab("Annaul Income")
+```
+##The following code creates a MLR model for Attrition. 
+#Creating Test & Training data sets for Attrition.
+```{r}
+set.seed(5)
+randomize = runif(nrow(Attrition))
+Attrition1 = Attrition[order(randomize), ]
+train = Attrition1[1:738, ] 
+test = Attrition1[739:870, ] 
+```
+#Creating a MLR model for column Att_Num.
+```{r}
+Att_Num_Trained = glm(Att_Num ~ Age+BusinessTravel+Department+DistanceFromHome+Education+EducationField+EnvironmentSatisfaction+Gender+ID+JobInvolvement+JobLevel+JobRole+JobSatisfaction+MaritalStatus+MonthlyIncome+NumCompaniesWorked+OverTime+PercentSalaryHike+PerformanceRating+RelationshipSatisfaction+TotalWorkingYears+TrainingTimesLastYear+WorkLifeBalance+Yearly_Income+YearsAtCompany+YearsInCurrentRole+YearsSinceLastPromotion+YearsWithCurrManager,family=binomial(link='logit'),data=train)
+summary(Att_Num_Trained)
+```
+#Performing feature selection for our MLR model on the "Att_Num" column.
+```{r}
+set.seed(7)
+#install.packages("mlbench")
+library(mlbench)
+library(caret)
+control = trainControl(method="repeatedcv", number=10, repeats=1)
+model = train(Att_Num~., data=Attrition, method="glmnet", preProcess="scale", trControl=control)
+importance = varImp(model, scale=FALSE)
+print(importance)
+plot(importance)
+```
+#Getting column indeces for the columns of statistically significant coefficients: "JobInvolvement," "OverTime," and "JobRole."
+```{r}
+grep("^JobInvolvement$", colnames(Attrition))
+grep("^OverTime$", colnames(Attrition))
+grep("^JobRole$", colnames(Attrition))
+grep("^Attrition$", colnames(Attrition))
+```
+#Creating a Naive-Bayes Classifer for Attrition With Columns "JobRole," "OverTime," & "JobInvolvement" as our top 3 explanatory variables.
+```{r}
+library(caret)
+library(lattice)
+library(e1071)
+nb_attrition_model = naiveBayes(train[,c(17,15,19)],train$Att_Num)
+table(predict(nb_attrition_model,test[,c(17,15,19)]),test$Att_Num)
+caret::confusionMatrix(table(predict(nb_attrition_model,test[,c(17,15,19)]),test$Att_Num))
+```
+##The following code upsamples our "Attrition" column as data imbalance was present. 
+#Counting occurences of Attrition to verify that imbalance exists. 
+```{r}
+table(Attrition$Attrition)
+```
+#Upsampling & creating train & test data sets to classify Attrition. Upsampling was performed because our Attrition column is imbalanced.
+```{r}
+library(caret)
+set.seed(1234)
+upindex = createDataPartition(Attrition$Attrition,p=0.8,list=FALSE)
+train2 = Attrition[upindex, ]
+test2 = Attrition[-upindex, ]
+```
+#Creating a new data set, "trainup," with the upsampled data.
+```{r}
+set.seed(111)
+trainup = upSample(x=train2[,-ncol(train2)],y=train2$Attrition)
+table(trainup$Attrition)
+trainup
+```
+#Creating a MLR model for Attrition on the upsampled data, "trainup."
+```{r}
+set.seed(123)
+modelup = glm(Attrition ~ ID+Age+BusinessTravel+Department+DistanceFromHome+Education+EducationField+EnvironmentSatisfaction+Gender+JobInvolvement+JobLevel+JobRole+JobSatisfaction+MaritalStatus+MonthlyIncome+NumCompaniesWorked+OverTime+PercentSalaryHike+PerformanceRating+RelationshipSatisfaction+TotalWorkingYears+TrainingTimesLastYear+WorkLifeBalance+Yearly_Income+YearsAtCompany+YearsInCurrentRole+YearsSinceLastPromotion+YearsWithCurrManager, data=trainup, family = "binomial")
+summary(modelup)
+```
+#Adding column "Att_Num" to "trainup" data set.
+```{r}
+Att_Num <- ifelse(trainup$Attrition == 'No', 0, 1)
+Att_Num
+trainup = cbind(Att_Num,trainup)
+```
+#Performing feature importance for our "trainup" data set to determine the variables that are most significant at predicting Attrition.
+```{r}
+set.seed(7)
+#install.packages("mlbench")
+library(mlbench)
+library(caret)
+control2 = trainControl(method="repeatedcv", number=10, repeats=1)
+model2 = train(Att_Num~. , data=trainup, method="glmnet", preProcess="scale", trControl=control)
+importance2 = varImp(model, scale=FALSE)
+print(importance2)
+plot(importance2)
+```
+#Finding column indeces for statistically significant columns: "YearsAtCompany," "JobRole," and "Age."
+```{r}
+grep("^JobRole$", colnames(trainup))
+grep("^YearsAtCompany$", colnames(trainup))
+grep("^Age$", colnames(trainup))
+```
+#Creating Naive Bayes classifer on upsampled data, "trainup", using columns "YearsAtCompany," "JobRole," & "Age" as explanatory variables.
+```{r}
+library(caret)
+library(lattice)
+library(e1071)
+nb_attrition_model2 = naiveBayes(train2[,c(34,18,3)],train2$Attrition)
+table = table(predict(nb_attrition_model2,test2[,c(34,18,3)]),test2$Attrition)
+caret::confusionMatrix(table(predict(nb_attrition_model2,test[,c(34,18,3)]),test$Attrition))
+```
+#Creating a data frame for my Naive Bayes Attrition classifier's predictions.
+```{r}
+attrition_predictions = predict(nb_attrition_model2,Attrition[,c(34,18,3)])
+att = data.frame(attrition_predictions)
+att
+```
+###The Code below is for developing a MLR model predicting an employee's monthly income. The linear regression model was built using the "MonthlyIncome" column as the response vriable. Upsampling was not performed as values for "MonthlyIncome" are unique.
+
+#Performing feature selection for our "MonthlyRate" column to determine what variables are significant at predicting Monthly Income.
+```{r}
+set.seed(7)
+#install.packages("mlbench")
+library(mlbench)
+library(caret)
+control = trainControl(method="repeatedcv", number=10, repeats=1)
+model = train(MonthlyRate~., data=Attrition, method="glmnet", preProcess="scale", trControl=control)
+importance = varImp(model, scale=FALSE)
+print(importance)
+plot(importance)
+```
+#Splitting the "Attrition" data set into test and training data sets.
+```{r}
+set.seed(4)
+TrainObs = sample(seq(1,dim(Attrition)[1]),round(.80*dim(Attrition)[1]),replace = FALSE)
+Attrition_Train = Attrition[TrainObs,]
+Attrition_Test = Attrition[-TrainObs,]
+```
+#Creating a MLR model for "MonthlyIncome" using "YearsAtCompany," "Job Role," and "Age" as explanatory variables.
+```{r}
+MLR_Salary= lm(MonthlyIncome~YearsAtCompany + JobRole + Age, data=Attrition_Train)
+summary(MLR_Salary)
+```
+#Performing cross validation to pickthe best model with forward selection.
+```{r}
+#install.packages("olsrr")
+library(olsrr)
+ols_step_forward_p(MLR_Salary, penter = .05, details = TRUE)
+```
+#Performing cross validation to pick the best model with backward selection.
+```{r}
+#install.packages("olsrr")
+library(olsrr)
+ols_step_forward_p(MLR_Salary, prem = .05, details = TRUE)
+```
+#Performing cross validation to pick the best model with stepwise selection.
+```{r}
+#install.packages("olsrr")
+library(olsrr)
+ols_step_forward_p(MLR_Salary, penter=.05,prem = .05, details = TRUE)
+```
+#Creating predicted values for monthly income and storing them in a data frame called "Income_Preds."
+```{r}
+Income_Preds = predict(MLR_Salary, newdata = Attrition_Test)
+Income_Preds = as.data.frame(Income_Preds)
+Income_Preds
+```
+#Calculating the RMSE for our model.
+```{r}
+MSPE = data.frame(Observed = Attrition_Test$MonthlyIncome, Predicted = Income_Preds)
+RMSE=sqrt(mean((MSPE$Observed - MSPE$Income_Preds)^2))
+RMSE
+```
+#Saving observed and predicted values to a csv for Monthly Salary.
+```{r}
+write.csv(MSPE,"~/Desktop/first_data_set.csv")
+```
+
