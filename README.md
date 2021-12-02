@@ -36,9 +36,11 @@ Again, using feature selection, Brittany identified that the top 3 variables inf
 2.	RMSE: 1694.557
 
 Upon completing this analysis Brittany has provided the following 3 recommendations for Frito Lay:
-1.	Increase the annual salary of Laboratory Technicians as they have a high attrition rate and a low yearly salary. 
-2.	Consider implementing employee retention programs that foster a culture of belonging. These programs can organize events such as Top Golf outings and happy      hours to strengthen the comradery amongst employees. 
-4.	Avoid promoting employees as a retention mechanism. The data shows a negative relationship exists between years since last promotion and attrition.
+1.	Utilize my Naive Bayes classifier and my multiple linear regression model  to retain talent and budget appropriately. 
+2.	Avoid promoting employees as a retention mechanism. The data shows a negative relationship exists between years since last promotion and attrition.
+3.	Increase the annual salary of Laboratory Technicians as they have a low annual salary and a high attrition rate.
+
+To view a YouTube video about this analysis please visit the following URL: https://youtu.be/vgB4_3Dgcyw
 
 # Introduction
 
@@ -58,7 +60,7 @@ Upon analyzing Frito Lay’s attrition data set, Brittany determined:
 1.	Job Roles with the highest attrition are: Sales Executives, Research Scientists, and Laboratory Technicians.
 2.	Job roles with the lowest attrition are: Research Directors, Manufacturing Directors, and Managers.
 3.	Naïve Bayes classified attrition with an accuracy of 100%.
-4.	Linear Regression model predicted monthly income with an RMSE of 1694. 
+4.	Linear Regression model predicted monthly income with an RMSE of 1,695. 
 
 # Extending This Research
 
